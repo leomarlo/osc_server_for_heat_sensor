@@ -1,0 +1,15 @@
+[tool.poetry]
+name = "scarecrow-py"
+version = "0.1.0"
+description = ""
+authors = ["Leonhard Horstmeyer <leo.h@hotmail.de>"]
+readme = "README.md"
+
+[tool.poetry.dependencies]
+python = "^3.9"
+python-osc = "^1.8.3"
+
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"

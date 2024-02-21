@@ -1,0 +1,10 @@
+version: '3.8'
+services:
+  osc_server:
+    ## create a build context in scarecrow_py
+    build:
+      context: .
+      dockerfile: dockerfile
+    container_name: osc_server
+    ports:
+      - "4560:4560/udp"
