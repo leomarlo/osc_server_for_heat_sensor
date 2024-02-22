@@ -2,7 +2,7 @@ import random
 import time
 from threading import Thread
 from pythonosc import udp_client, dispatcher, osc_server
-from config import CONFIG
+from config import CONFIG, CAPTURE_MODES
 import video.heat_sensor as scarecrow
 
 
@@ -18,7 +18,12 @@ def send_signal_periodically():
     """
     client = udp_client.SimpleUDPClient(CONFIG.OSC_IP, CONFIG.OSC_PORT)
     while True:
-        number = scarecrow.heat_sensor()
+        if CONFIG.MODE==CAPTURE_MODES["body_in_center"]:
+            number = scarecrow.body_in_center()
+        elif CONFIG.MODE==CAPTURE_MODES["heat_sensor"]:
+            number = scarecrow.heat_sensor()
+        else:
+            number = random.randint(0, CONFIG.MAX_NUMBER)
 
         client.send_message("/scarecrow", number)
         print(f"Sent: {number}")

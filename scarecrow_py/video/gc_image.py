@@ -1,4 +1,5 @@
 from google.cloud import vision
+import cv2
 from google.oauth2 import service_account
 import io
 # import dotenv
@@ -62,11 +63,24 @@ def detect_text_from_frame(frame):
     # Create a client using the loaded credentials
     client = vision.ImageAnnotatorClient(credentials=credentials)
 
-    image = vision.Image(content=frame)
-    response = client.text_detection(image=image)
-    texts = response.text_annotations   
+    #  Convert the frame (NumPy array) to bytes
+    success, encoded_image = cv2.imencode('.jpg', frame)
+    if not success:
+        raise ValueError("Could not encode image")
+    byte_frame = encoded_image.tobytes()
 
-    extremes = process_numbers_and_find_extremes([text.description for text in texts])
+    # Use the bytes version of the frame
+    image = vision.Image(content=byte_frame)
+    response = client.text_detection(image=image)
+    texts = response.text_annotations
+
+    # Convert the first result to dict and extract descriptions
+    if texts:
+        texts_descriptions = [text.description for text in texts]
+    else:
+        texts_descriptions = []
+
+    extremes = process_numbers_and_find_extremes(texts_descriptions)
 
     if response.error.message:
         raise Exception('{}\nFor more info on error messages, check: https://cloud.google.com/apis/design/errors'.format(response.error.message))
